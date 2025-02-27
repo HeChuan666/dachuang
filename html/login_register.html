@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人中心</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    .container h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .form-group button:hover {
+      background-color: #002a52;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>登录</h2>
+    <div class="form-group">
+      <label for="login-username">用户名</label>
+      <input type="text" id="login-username" placeholder="请输入用户名">
+    </div>
+    <div class="form-group">
+      <label for="login-password">密码</label>
+      <input type="password" id="login-password" placeholder="请输入密码">
+    </div>
+    <div class="form-group">
+      <button id="login-btn">登录</button>
+    </div>
+    <hr>
+    <h2>注册</h2>
+    <div class="form-group">
+      <label for="register-username">用户名</label>
+      <input type="text" id="register-username" placeholder="请输入用户名">
+    </div>
+    <div class="form-group">
+      <label for="register-password">密码</label>
+      <input type="password" id="register-password" placeholder="请输入密码">
+    </div>
+    <div class="form-group">
+      <button id="register-btn">注册</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('login-btn').addEventListener('click', function () {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('register-btn').addEventListener('click', function () {
+      const username = document.getElementById('register-username').value;
+      const password = document.getElementById('register-password').value;
+      fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+</body>
+
+</html>

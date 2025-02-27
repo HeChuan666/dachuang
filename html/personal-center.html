@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<body>
+  <!-- 获取用户信息按钮 -->
+  <div id="userinfo-container">
+    <h2>用户信息</h2>
+    <button id="get-userinfo-btn">获取用户信息</button>
+    <div id="userinfo-display"></div>
+  </div>
+
+  <!-- 更新用户信息表单 -->
+  <div id="update-userinfo-form-container">
+    <h2>更新用户信息</h2>
+    <form id="update-userinfo-form">
+      <input type="text" name="username" placeholder="用户名" required>
+      <input type="email" name="email" placeholder="邮箱" required>
+      <button type="submit">更新</button>
+    </form>
+  </div>
+
+  <!-- 重置密码表单 -->
+  <div id="reset-password-form-container">
+    <h2>重置密码</h2>
+    <form id="reset-password-form">
+      <input type="password" name="oldPassword" placeholder="旧密码" required>
+      <input type="password" name="newPassword" placeholder="新密码" required>
+      <button type="submit">重置密码</button>
+    </form>
+  </div>
+
+  <script>
+    // 更新用户信息表单提交处理,更新的是当前登录用户的信息，借助当前登录用户的token进行更新用户信息
+    document.getElementById('update-userinfo-form').addEventListener('submit', function (event) {
+      event.preventDefault(); // 阻止默认提交行为
+
+      const formData = new FormData(this); // 获取表单数据
+      const params = new URLSearchParams();
+
+      // 将表单数据添加到 URLSearchParams 对象中
+      for (const [key, value] of formData.entries()) {
+        if (value.trim() !== '') { // 确保字段不为空
+          params.append(key, value);
+        }
+      }
+
+      console.log('更新用户信息数据:', Object.fromEntries(formData.entries()));
+
+      fetch('http://127.0.0.1:3007/my/userinfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Authorization': 'Bearer ' + localStorage.getItem('token') // 假设你使用token进行身份验证
+        },
+        body: params.toString() // 将 URLSearchParams 对象转换为字符串
+      })
+        .then(response => response.json())
+        .then(data => {
+          // 处理更新用户信息成功的逻辑
+          if (data.status === 0) {
+            alert('更新用户信息成功！');
+          } else {
+            alert('更新用户信息失败：' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('更新用户信息失败:', error);
+          // 处理更新用户信息失败后的逻辑
+          alert('更新用户信息失败：' + error.message);
+        });
+    });
+
+    // 重置密码表单提交处理
+    document.getElementById('reset-password-form').addEventListener('submit', function (event) {
+      event.preventDefault(); // 阻止表单默认提交行为
+
+      const formData = new FormData(this);
+      const data = {
+        oldPassword: formData.get('oldPassword'),
+        newPassword: formData.get('newPassword')
+      };
+
+      fetch('http://127.0.0.1:3007/my/updatepwd', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token') // 假设你使用token进行身份验证
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('重置密码成功:', data);
+          // 处理重置密码成功的逻辑
+          if (data.status === 0) {
+            alert('重置密码成功！');
+          } else {
+            alert('重置密码失败：' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('重置密码失败:', error);
+          // 处理重置密码失败后的逻辑
+          alert('重置密码失败：' + error.message);
+        });
+    });
+
+  </script>
+</body>
